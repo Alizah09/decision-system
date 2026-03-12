@@ -1,17 +1,27 @@
 import json
 
+
 class RuleEngine:
 
     def __init__(self, rule_file):
         with open(rule_file, "r") as f:
             self.rules = json.load(f)["rules"]
 
-    def evaluate(self, income, credit_score):
+    def evaluate(self, data):
+        decision_trace = []
+        final_action = None
 
         for rule in self.rules:
-            cond = rule["conditions"]
+            condition = rule["condition"]
 
-            if income >= cond["income"] and credit_score >= cond["credit_score"]:
-                return rule["decision"]
+            if eval(condition, {}, data):
+                decision_trace.append(rule["name"])
+                final_action = rule["action"]
 
-        return "Rejected"
+                if final_action in ["approve", "reject", "manual_review"]:
+                    break
+
+        return {
+            "decision": final_action,
+            "trace": decision_trace
+        }

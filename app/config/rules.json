@@ -1,20 +1,19 @@
 {
   "rules": [
     {
-      "name": "High Income Approval",
-      "conditions": {
-        "income": 50000,
-        "credit_score": 700
-      },
-      "decision": "Approved"
+      "name": "minimum_income",
+      "condition": "income >= 30000",
+      "action": "pass"
     },
     {
-      "name": "Medium Risk",
-      "conditions": {
-        "income": 30000,
-        "credit_score": 600
-      },
-      "decision": "Review"
+      "name": "credit_score_check",
+      "condition": "credit_score >= 650",
+      "action": "approve"
+    },
+    {
+      "name": "low_credit_score",
+      "condition": "credit_score < 650",
+      "action": "manual_review"
     }
   ]
 }

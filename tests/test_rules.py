@@ -1,9 +1,14 @@
 from app.engine.rule_engine import RuleEngine
 
-def test_rule_engine():
 
+def test_rule_engine():
     engine = RuleEngine("app/config/rules.json")
 
-    result = engine.evaluate(60000, 750)
+    data = {
+        "income": 40000,
+        "credit_score": 700
+    }
 
-    assert result == "Approved"
+    result = engine.evaluate(data)
+
+    assert result["decision"] == "approve"

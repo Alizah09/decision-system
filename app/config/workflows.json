@@ -1,0 +1,10 @@
+{
+  "loan_approval": {
+    "steps": [
+      "validate_input",
+      "fetch_credit_score",
+      "evaluate_rules",
+      "final_decision"
+    ]
+  }
+}
