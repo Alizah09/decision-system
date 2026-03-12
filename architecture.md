@@ -1,6 +1,5 @@
-Architecture Document
-Configurable Workflow Decision Platform
-1. System Overview
+# Configurable Workflow Decision Platform
+## 1. System Overview
 
 This project implements a configurable workflow decision system capable of processing incoming requests, evaluating rules, executing workflow stages, maintaining state, and recording audit logs.
 
@@ -16,10 +15,10 @@ Document verification
 
 The system is designed to be configurable, resilient, and auditable, allowing workflows and rules to change without modifying the core application logic.
 
-2. System Architecture
+## 2. System Architecture
 
 The system follows a modular service-oriented architecture.
-
+```
 Client Request
       ↓
 FastAPI REST API
@@ -35,11 +34,11 @@ External Dependency (Mock API)
 State Management Service
       ↓
 Audit Logging Service
-
+```
 Each component has a clear responsibility, enabling maintainability and extensibility.
 
-3. Key Components
-3.1 API Layer (FastAPI)
+## 3. Key Components
+### 3.1 API Layer (FastAPI)
 
 The API layer provides a REST interface for interacting with the system.
 
@@ -66,7 +65,7 @@ OpenAPI documentation
 
 high performance
 
-3.2 Workflow Engine
+### 3.2 Workflow Engine
 
 The Workflow Engine orchestrates the execution of workflow steps defined in configuration.
 
@@ -83,7 +82,7 @@ manage retry logic
 handle failures
 
 Example workflow configuration:
-
+```
 {
   "loan_approval": {
     "steps": [
@@ -94,21 +93,21 @@ Example workflow configuration:
     ]
   }
 }
-
+```
 This design ensures workflows can change without modifying application code.
 
-3.3 Rule Engine
+### 3.3 Rule Engine
 
 The Rule Engine evaluates business rules against incoming request data.
 
 Example rule configuration:
-
+```
 {
   "name": "credit_score_check",
   "condition": "credit_score >= 650",
   "action": "approve"
 }
-
+```
 Responsibilities:
 
 evaluate rule conditions
@@ -119,7 +118,7 @@ produce rule trace logs
 
 This enables explainable decision making.
 
-3.4 State Management Service
+### 3.4 State Management Service
 
 The state service stores the lifecycle of workflow requests.
 
@@ -131,13 +130,13 @@ data
 execution history
 
 Example state record:
-
+```
 {
   request_id: REQ20
   status: approved
   history: [...]
 }
-
+```
 State management enables:
 
 workflow tracking
@@ -146,12 +145,12 @@ duplicate request detection
 
 idempotency
 
-3.5 Audit Logging Service
+### 3.5 Audit Logging Service
 
 The audit service records all workflow actions and rule evaluations.
 
 Example audit log entry:
-
+```
 {
   request_id: REQ20
   step: evaluate_rules
@@ -159,7 +158,7 @@ Example audit log entry:
   rules_triggered: [...]
   timestamp: ...
 }
-
+```
 This provides:
 
 traceability
@@ -168,7 +167,7 @@ explainable decisions
 
 debugging capability
 
-3.6 External Dependency Simulation
+### 3.6 External Dependency Simulation
 
 The system simulates an external service:
 
@@ -183,7 +182,7 @@ Example simulation:
 
 This demonstrates system robustness under real-world conditions.
 
-4. Failure Handling and Retry Strategy
+## 4. Failure Handling and Retry Strategy
 
 External dependency calls are wrapped in retry logic.
 
@@ -197,7 +196,7 @@ workflow status → retry
 
 Failures are recorded in audit logs for observability.
 
-5. Idempotency Handling
+## 5. Idempotency Handling
 
 To prevent duplicate processing, the system checks if a request ID already exists.
 
@@ -208,7 +207,7 @@ Do not re-execute workflow
 
 This ensures consistent behavior under repeated submissions.
 
-6. Configuration Model
+## 6. Configuration Model
 
 The system is driven by configuration files:
 
@@ -223,7 +222,7 @@ rule updates without code changes
 
 improved maintainability
 
-7. Testing Strategy
+## 7. Testing Strategy
 
 Automated tests were implemented using pytest.
 
@@ -243,7 +242,7 @@ retry logic
 
 This ensures reliability of system components.
 
-8. Scalability Considerations
+## 8. Scalability Considerations
 
 For production environments the system could scale using:
 
@@ -259,7 +258,7 @@ containerized deployment
 
 This allows the system to handle high volumes of requests.
 
-9. Design Trade-offs
+## 9. Design Trade-offs
 In-memory state storage
 
 Pros:
@@ -290,7 +289,7 @@ requires careful validation
 Future improvement:
 
 dedicated rule DSL
-10. Conclusion
+## 10. Conclusion
 
 The implemented system provides a flexible and resilient workflow decision platform capable of handling configurable business processes.
 
