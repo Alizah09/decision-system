@@ -1,65 +1,35 @@
-Configurable Workflow Decision Platform
-Overview
+# ⚙️ Configurable Workflow Decision Platform
 
-This project implements a Configurable Workflow Decision Platform capable of processing incoming requests, evaluating rules, executing workflow stages, maintaining state, recording audit logs, and handling failures with retries.
+---
 
-The system is designed to simulate real-world business workflows such as:
+## 📖 Project Overview
 
-Application approval workflows
+This project implements a **Configurable Workflow Decision Platform** capable of processing incoming requests, evaluating rules, executing workflow stages, maintaining state, recording audit logs, and handling failures with retries.
 
-Claim processing workflows
+The system simulates real-world business workflows such as:
 
-Vendor approval workflows
+- Application approval workflow
+- Claim processing workflow
+- Vendor approval workflow
+- Document verification workflow
 
-Document verification workflows
+The platform is **configurable, resilient, and auditable**, allowing workflows and rules to change without modifying core application logic.
 
-The platform is configurable and resilient, allowing workflows and rules to be modified without major code changes.
+---
 
-Key Features
-
-REST API interface built using FastAPI
-
-Configurable workflows defined via JSON configuration
-
-Rule-based decision engine for evaluating business rules
-
-Workflow execution engine for step-by-step processing
-
-External dependency simulation to test resilience
-
-Retry mechanism for handling dependency failures
-
-Audit logging system for explainable decision tracking
-
-State management service for workflow lifecycle tracking
-
-Idempotency handling to prevent duplicate request processing
-
-Automated test coverage using pytest
-
-System Architecture
-
-The system follows a modular architecture where each component handles a specific responsibility.
-
-Client Request
-      ↓
-FastAPI REST API
-      ↓
-Request Validation (Pydantic)
-      ↓
-Workflow Engine
-      ↓
-Rule Engine
-      ↓
-External Dependency (Mock API)
-      ↓
-State Management Service
-      ↓
-Audit Logging Service
-
-This architecture ensures low coupling and high configurability.
-
-Project Structure
+## 🏗 System Architecture
+```
+flowchart TD
+    A[Client Request] --> B[FastAPI REST API]
+    B --> C[Request Validation (Pydantic)]
+    C --> D[Workflow Engine]
+    D --> E[Rule Engine]
+    E --> F[External Dependency\n(Mock API)]
+    F --> G[State Management Service]
+    G --> H[Audit Logging Service]
+```
+## Project Structure
+```
 decision-system/
 │
 ├── app/
@@ -90,96 +60,74 @@ decision-system/
 ├── architecture.md
 ├── README.md
 └── requirements.txt
-Installation and Setup
-1. Clone the repository
-git clone <your-repo-url>
-cd decision-system
-2. Install dependencies
-pip install -r requirements.txt
-3. Run the API server
-uvicorn app.main:app --reload
-
-Server will start at:
-
-http://127.0.0.1:8000
-
-Interactive API documentation:
-
-http://127.0.0.1:8000/docs
-API Usage
+```
+## 🚀 API Endpoints
 Process Workflow Request
-
-Endpoint:
-
 POST /process-request
-
-Example request:
-
+Example Request
+```
 {
   "request_id": "REQ20",
   "workflow": "loan_approval",
   "income": 50000,
   "credit_score": 700
 }
+```
+Example Response
 
-Example response:
+```
 
 {
   "request_id": "REQ20",
-  "status": "approved",
-  "history": [
-    {
-      "step": "validate_input",
-      "result": "validated"
-    },
-    {
-      "step": "fetch_credit_score",
-      "result": 738
-    },
-    {
-      "step": "evaluate_rules",
-      "result": {
-        "decision": "approve",
-        "trace": [
-          "minimum_income",
-          "credit_score_check"
-        ]
-      }
-    }
-  ]
+  "status": "approved"
 }
-Audit Logs
-
-Endpoint:
-
+Get Audit Logs
 GET /audit-logs
-
-Returns workflow execution logs and rule decisions for transparency.
-
-Example response:
-
+```
+Example Response
+```
 [
   {
     "request_id": "REQ20",
     "step": "evaluate_rules",
-    "details": {
-      "decision": "approve",
-      "rules_triggered": [
-        "minimum_income",
-        "credit_score_check"
-      ]
-    },
-    "timestamp": "2026-03-12T10:45:21"
+    "decision": "approve",
+    "rules_triggered": [
+      "minimum_income",
+      "credit_score_check"
+    ]
   }
 ]
-Configuration Model
+```
+### 🔁 Failure Handling & Retry Strategy
 
-The system is driven by configuration files.
+External dependency failures are handled with retry logic.
 
-workflows.json
+Max Retries = 3
 
-Defines workflow steps:
+If all retries fail:
 
+Workflow Status → retry
+
+Failures are recorded in the audit logs.
+
+### 🔄 Idempotency Handling
+
+To prevent duplicate processing:
+
+If request_id exists → return existing result
+Else → execute workflow
+
+This ensures consistent results for repeated requests.
+
+## ⚙️ Configuration Model
+
+The platform is driven by configuration files.
+
+config/workflows.json
+config/rules.json
+
+Example Workflow Configuration
+```
 {
   "loan_approval": {
     "steps": [
@@ -190,68 +138,41 @@ Defines workflow steps:
     ]
   }
 }
-rules.json
+```
+## 🧪 Testing
 
-Defines rule conditions and actions:
-
-{
-  "name": "credit_score_check",
-  "condition": "credit_score >= 650",
-  "action": "approve"
-}
-
-This approach allows workflows and rules to change without modifying code.
-
-Testing
-
-Automated tests are implemented using pytest.
-
-Run tests:
+Run tests using pytest:
 
 python -m pytest
 
 Test coverage includes:
 
-rule evaluation
+Workflow execution
 
-workflow execution
+Rule evaluation
 
-dependency failure
+Duplicate request handling
 
-retry logic
+Retry logic
 
-duplicate request handling
+Dependency failure simulation
 
-Failure Handling
+## 🧰 Tech Stack
 
-The system simulates external API failures.
+Python
 
-Retry strategy:
+FastAPI
 
-Max retries = 3
+Pydantic
 
-If all retries fail, the workflow returns:
+Pytest
 
-status = retry
+JSON Configuration
 
-This demonstrates system resilience.
+## Git & GitHub
 
-Future Improvements
+📌 Repository
+https://github.com/Alizah09/decision-system
+## 🎯 Conclusion
 
-Possible enhancements include:
-
-persistent database storage (PostgreSQL)
-
-message queue for workflow orchestration
-
-distributed microservices architecture
-
-advanced rule engine with rule DSL
-
-containerized deployment using Docker
-
-Conclusion
-
-This project demonstrates a resilient and configurable workflow decision platform capable of handling real-world business workflows with rule-based evaluation, auditability, and failure handling.
-
-The modular architecture ensures the system is maintainable, extensible, and suitable for scaling in production environments.
+This project demonstrates a resilient and configurable workflow decision platform capable of handling rule-based business workflows with auditability, retry logic, and modular architecture.
